@@ -3,8 +3,15 @@ from datetime import datetime
 
 from config import FLOWER_SESSION, FLOWER_PROFILE_URL, TACHI_API_KEY
 from flower import parse_page
-from games.gitadora import parse_gitabass
+from games.ddr import parse_ddr, DDRStyle
 from tachi import submit_score
+
+SUPPORTED_GAMES = [
+    "DanceDanceRevolution: SP",
+    "DanceDanceRevolution: DP",
+    "Gitadora: Drums",
+    "Gitadora: Guitar/Bass"
+]
 
 if __name__ == "__main__":
     if FLOWER_PROFILE_URL == "":
@@ -14,8 +21,10 @@ if __name__ == "__main__":
         print("Flower session cookie is not provided. Aborting")
         exit(1)
 
+
+
     songs = parse_page(FLOWER_PROFILE_URL)
-    tachi_data = parse_gitabass(songs)
+    tachi_data = parse_ddr(songs, DDRStyle.DP)
 
     cur_time = int(datetime.now().timestamp())
     file_name = f"dora-{cur_time}.json"
