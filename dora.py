@@ -1,35 +1,29 @@
-from helpers import create_base, parse_date
+from helpers import create_base, parse_date, FlowerSongData
 
 
-def parse_dora(soup):
+def parse_dora(songs: list[FlowerSongData]) -> dict:
     json_data = create_base("gitadora", "Dora")
 
-    song_row = soup.find_all("tr", class_="accordion-toggle")
-    for song in song_row:
-        url = song.find("a")["href"].split("/")
-        if url[8] != "0":  # ignore non drum modes
+    for song in songs:
+        if song.url[8] != "0":  # ignore non drum modes
             continue
-
-        extra_data = soup.find("div", id=song["data-target"][1:]).find("div", recursive=False).find_all("div",
-                                                                                                        recursive=False)
-        rows = song.find_all("td")
 
         song_data = {
             "matchType": "inGameID",
-            "identifier": url[7],
-            "percent": float(rows[4].find("small").text.strip()[:-1]),
-            "lamp": rows[5].find("strong").text.strip().upper(),
-            "difficulty": rows[2].find("strong").next_sibling.text.strip().upper(),
-            "timeAchieved": parse_date(rows[6].find("small").text),
+            "identifier": song.url[7],
+            "percent": float(song.header[4].find("small").text.strip()[:-1]),
+            "lamp": song.header[5].find("strong").text.strip().upper(),
+            "difficulty": song.header[2].find("strong").next_sibling.text.strip().upper(),
+            "timeAchieved": parse_date(song.header[6].find("small").text),
             "judgements": {
-                "perfect": int(extra_data[4].find("br").next_sibling.text),
-                "great": int(extra_data[5].find("br").next_sibling.text),
-                "good": int(extra_data[6].find("br").next_sibling.text),
-                "ok": int(extra_data[7].find("br").next_sibling.text),
-                "miss": int(extra_data[8].find("br").next_sibling.text)
+                "perfect": int(song.accordion[4].find("br").next_sibling.text),
+                "great": int(song.accordion[5].find("br").next_sibling.text),
+                "good": int(song.accordion[6].find("br").next_sibling.text),
+                "ok": int(song.accordion[7].find("br").next_sibling.text),
+                "miss": int(song.accordion[8].find("br").next_sibling.text)
             },
             "optional": {
-                "maxCombo": int(extra_data[9].find("br").next_sibling.text)
+                "maxCombo": int(song.accordion[9].find("br").next_sibling.text)
             }
         }
         json_data["scores"].append(song_data)
