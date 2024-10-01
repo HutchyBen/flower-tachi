@@ -8,7 +8,6 @@ A python tool for importing flower scores into kamaitachi
 - import the json file if not using automatic uploading
 
 ## TODO (in order of priority)
-- Automatic score page support
 - Support as many games
 - Cleaner profile URL system (perhaps using flower session)
 - An easy-to-use CLI
