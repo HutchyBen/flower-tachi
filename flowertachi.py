@@ -1,12 +1,9 @@
 import json
 from datetime import datetime
 
-import requests
-from bs4 import BeautifulSoup
-
 from config import FLOWER_SESSION, FLOWER_PROFILE_URL, TACHI_API_KEY
 from dora import parse_dora
-from helpers import FlowerSongData
+from flower import parse_page
 from tachi import submit_score
 
 if __name__ == "__main__":
@@ -17,23 +14,14 @@ if __name__ == "__main__":
         print("Flower session cookie is not provided. Aborting.")
         exit(1)
 
-    # get score page and load into SOUUPPPP
-    s = requests.Session()
-    s.cookies.set("flower_session", FLOWER_SESSION)
-    res = s.get(FLOWER_PROFILE_URL)
-    soup = BeautifulSoup(res.text, "html.parser")
+    songs = parse_page(FLOWER_PROFILE_URL)
+    tachi_data = parse_dora(songs)
 
-    songs: list[FlowerSongData] = list[FlowerSongData]()  # huh type checking complains if you use []
-    song_row = soup.find_all("tr", class_="accordion-toggle")
-    for song in song_row:
-        songs.append(FlowerSongData(song))
-
-    data = parse_dora(songs)
     cur_time = int(datetime.now().timestamp())
     with open(f"dora-{cur_time}.json", "w") as f:
-        f.write(json.dumps(data, indent=4))
+        f.write(json.dumps(tachi_data, indent=4))
 
     if TACHI_API_KEY == "":
         print("No tachi API key provided. Not uploading")
     else:
-        submit_score(data)
+        submit_score(tachi_data)

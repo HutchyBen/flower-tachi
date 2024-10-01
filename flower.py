@@ -1,6 +1,9 @@
 from datetime import datetime
 
+import requests
 from bs4 import BeautifulSoup
+
+from config import FLOWER_SESSION
 
 
 class FlowerSongData:
@@ -11,15 +14,18 @@ class FlowerSongData:
         self.accordion = accordion_div.find("div", recursive=False).find_all("div", recursive=False)
 
 
-def create_base(game: str, playtype: str) -> dict:
-    return {
-        "meta": {
-            "game": game,
-            "playtype": playtype,
-            "service": "flower-tachi"
-        },
-        "scores": []
-    }
+def parse_page(url: str) -> list[FlowerSongData]:
+    s = requests.Session()
+    s.cookies.set("flower_session", FLOWER_SESSION)
+    res = s.get(url)
+    soup = BeautifulSoup(res.text, "html.parser")
+
+    songs: list[FlowerSongData] = list[FlowerSongData]()  # huh type checking complains if you use []
+    song_row = soup.find_all("tr", class_="accordion-toggle")
+
+    for song in song_row:
+        songs.append(FlowerSongData(song))
+    return songs
 
 
 def parse_date(date_str: str) -> int:
