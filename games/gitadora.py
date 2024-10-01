@@ -1,14 +1,19 @@
+from enum import Enum
+
 from flower import parse_date, FlowerSongData
 from tachi import create_base
 
 
-def _parse_gitadora(songs: list[FlowerSongData], dora: bool, ) -> dict:
-    json_data = create_base("gitadora", "Dora" if dora else "Gita")
+class GitadoraStyle(Enum):
+    Drum = "Gita"
+    GitaBass = "Dora"
+def parse_gitadora(songs: list[FlowerSongData], style: GitadoraStyle, ) -> dict:
+    json_data = create_base("gitadora", style.value)
 
     for song in songs:
         mode = song.url[8]
         # 0 = drum, 1 = guitar, 2 = bass for if i ever forget
-        wrong_mode = (mode == "1" or mode == "2") if dora else (mode == "0")
+        wrong_mode = (mode == "1" or mode == "2") if style == GitadoraStyle.Drum else (mode == "0")
         if wrong_mode:
             continue
 
@@ -33,11 +38,3 @@ def _parse_gitadora(songs: list[FlowerSongData], dora: bool, ) -> dict:
         }
         json_data["scores"].append(song_data)
     return json_data
-
-
-def parse_dora(songs: list[FlowerSongData]) -> dict:
-    return _parse_gitadora(songs, True)
-
-
-def parse_gitabass(songs: list[FlowerSongData]) -> dict:
-    return _parse_gitadora(songs, False)

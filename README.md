@@ -7,6 +7,10 @@ A python tool for importing flower scores into kamaitachi
 - run flowertachi.py to generate json file and upload to tachi 
 - import the json file if not using automatic uploading
 
+## Supported Games
+- DanceDanceRevolution (SP/DP)
+- GITADORA (Guitar/Drum/Bass)
+
 ## TODO (in order of priority)
 - Support as many games
 - Cleaner profile URL system (perhaps using flower session)
