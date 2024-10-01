@@ -9,6 +9,13 @@ from dora import parse_dora
 from tachi import submit_score
 
 if __name__ == "__main__":
+    if FLOWER_PROFILE_URL == "":
+        print("Profile URL to import is not provided. Aborting.")
+        exit(1)
+    if FLOWER_SESSION == "":
+        print("Flower session cookie is not provided. Aborting.")
+        exit(1)
+
     s = requests.Session()
     s.cookies.set("flower_session", FLOWER_SESSION)
     res = s.get(FLOWER_PROFILE_URL)
