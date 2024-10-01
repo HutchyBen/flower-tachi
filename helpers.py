@@ -1,4 +1,6 @@
 from datetime import datetime
+
+
 def create_base(game, playtype):
     return {
         "meta": {
@@ -8,6 +10,7 @@ def create_base(game, playtype):
         },
         "scores": []
     }
+
 
 def parse_date(date_str):
     date_format = "%Y-%m-%d %I:%M %p"

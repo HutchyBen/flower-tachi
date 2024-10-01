@@ -6,11 +6,17 @@ def parse_dora(soup):
 
     song_row = soup.find_all("tr", class_="accordion-toggle")
     for song in song_row:
-        extra_data = soup.find("div", id=song["data-target"][1:]).find("div", recursive=False).find_all("div", recursive=False)
+        url = song.find("a")["href"].split("/")
+        if url[8] != "0":  # ignore non drum modes
+            continue
+
+        extra_data = soup.find("div", id=song["data-target"][1:]).find("div", recursive=False).find_all("div",
+                                                                                                        recursive=False)
         rows = song.find_all("td")
+
         song_data = {
             "matchType": "inGameID",
-            "identifier": song.find("a")["href"].split("/")[7],
+            "identifier": url[7],
             "percent": float(rows[4].find("small").text.strip()[:-1]),
             "lamp": rows[5].find("strong").text.strip().upper(),
             "difficulty": rows[2].find("strong").next_sibling.text.strip().upper(),
