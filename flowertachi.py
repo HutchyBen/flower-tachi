@@ -2,8 +2,8 @@ import json
 from datetime import datetime
 
 from config import FLOWER_SESSION, FLOWER_PROFILE_URL, TACHI_API_KEY
-from dora import parse_dora
 from flower import parse_page
+from games.gitadora import parse_gitabass
 from tachi import submit_score
 
 if __name__ == "__main__":
@@ -15,7 +15,7 @@ if __name__ == "__main__":
         exit(1)
 
     songs = parse_page(FLOWER_PROFILE_URL)
-    tachi_data = parse_dora(songs)
+    tachi_data = parse_gitabass(songs)
 
     cur_time = int(datetime.now().timestamp())
     file_name = f"dora-{cur_time}.json"
