@@ -2,15 +2,13 @@
 A python tool for importing flower scores into kamaitachi
 
 ## How To Use
--  modify main.py script
-  - add flower_session cookie to the cookies
-  - set correct gitadora profile URL
-- run script to create dora.json 
-- import dora.json with manual import in kamaitachi
+-  modify config.py script variables to own
+    - `TACHI_API_KEY` is optional. outputting to json still exists  
+- run flowertachi.py to generate json file and upload to tachi 
+- import the json file if not using automatic uploading
 
 ## TODO (in order of priority)
 - Automatic score page support
-- Directly connect to kamaitachi instead of outputting json
 - Support as many games
 - Cleaner profile URL system (perhaps using flower session)
 - An easy-to-use CLI
