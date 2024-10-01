@@ -25,6 +25,13 @@ def parse_page(url: str) -> list[FlowerSongData]:
 
     for song in song_row:
         songs.append(FlowerSongData(song))
+
+    paginator = soup.find("ul", class_="pagination")
+    if paginator:
+        next_button = paginator.find_all("li")[-1].find("a")
+        if next_button:
+            songs.extend(parse_page(next_button["href"]))
+
     return songs
 
 
