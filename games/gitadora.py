@@ -1,19 +1,15 @@
-from enum import Enum
-
-from flower import parse_date, FlowerSongData
+from flower import parse_date
+from ft_types import Game, FlowerSongData
 from tachi import create_base
 
 
-class GitadoraStyle(Enum):
-    Drum = "Gita"
-    GitaBass = "Dora"
-def parse_gitadora(songs: list[FlowerSongData], style: GitadoraStyle, ) -> dict:
-    json_data = create_base("gitadora", style.value)
+def parse_gitadora(songs: list[FlowerSongData], game: Game, ) -> dict:
+    json_data = create_base(game.tachi_gpt)
 
     for song in songs:
         mode = song.url[8]
         # 0 = drum, 1 = guitar, 2 = bass for if i ever forget
-        wrong_mode = (mode == "1" or mode == "2") if style == GitadoraStyle.Drum else (mode == "0")
+        wrong_mode = (mode == "1" or mode == "2") if game.tachi_gpt[1] == "Dora" else (mode == "0")
         if wrong_mode:
             continue
 

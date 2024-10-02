@@ -4,22 +4,26 @@ import requests
 from bs4 import BeautifulSoup
 
 from config import FLOWER_SESSION
+from ft_types import FlowerSongData, Game
 
 
-class FlowerSongData:
-    def __init__(self, song_element: BeautifulSoup) -> None:
-        self.url = song_element.find("a")["href"].split("/")
-        self.header = song_element.find_all("td")
-        accordion_div = song_element.parent.find("div", id=song_element["data-target"][1:])  # to remove padding div
-        self.accordion = accordion_div.find("div", recursive=False).find_all("div", recursive=False)
-
-
-def parse_page(url: str) -> list[FlowerSongData]:
+def flower_get(url: str) -> BeautifulSoup:
     s = requests.Session()
     s.cookies.set("flower_session", FLOWER_SESSION)
     res = s.get(url)
-    soup = BeautifulSoup(res.text, "html.parser")
+    return BeautifulSoup(res.text, "html.parser")
 
+
+def find_profile_url(game: Game):
+    soup = flower_get("https://projectflower.eu")
+    button = soup.find("a", attrs={"title": game.flower_name})
+    if button is None:
+        raise Exception("Game not found on your profile")
+    return button["href"]
+
+
+def parse_page(url: str) -> list[FlowerSongData]:
+    soup = flower_get(url)
     songs: list[FlowerSongData] = list[FlowerSongData]()  # huh type checking complains if you use []
     song_row = soup.find_all("tr", class_="accordion-toggle")
 
