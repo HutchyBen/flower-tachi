@@ -4,11 +4,11 @@ from requests import Response
 from config import TACHI_BASE_URL, TACHI_API_KEY, TACHI_IMPORT_ENDPOINT
 
 
-def create_base(game: str, playtype: str) -> dict:
+def create_base(gpt: tuple[str, str]) -> dict:
     return {
         "meta": {
-            "game": game,
-            "playtype": playtype,
+            "game": gpt[0],
+            "playtype": gpt[1],
             "service": "flower-tachi"
         },
         "scores": []

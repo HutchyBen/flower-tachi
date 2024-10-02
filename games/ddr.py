@@ -1,7 +1,7 @@
-from enum import Enum
-
-from flower import FlowerSongData, parse_date
+from flower import parse_date
+from ft_types import Game, FlowerSongData
 from tachi import create_base
+
 
 def _get_difficulty_name(difficulty: int) -> str:
     match difficulty:
@@ -16,18 +16,15 @@ def _get_difficulty_name(difficulty: int) -> str:
         case 4 | 8:
             return "CHALLENGE"
 
-class DDRStyle(Enum):
-    SP = "SP"
-    DP = "DP"
 
-def parse_ddr(songs: list[FlowerSongData], style: DDRStyle) -> dict:
-    json_data = create_base("ddr", style.value)
+def parse_ddr(songs: list[FlowerSongData], game: Game) -> dict:
+    json_data = create_base(game.tachi_gpt)
     json_data["meta"]["version"] = "a3"
     for song in songs:
         diff = int(song.url[8])
-        if style == DDRStyle.SP and diff >= 5:
+        if game.tachi_gpt[1] == "SP" and diff >= 5:
             continue
-        if style == DDRStyle.DP and diff < 5:
+        if game.tachi_gpt[1] == "DP" and diff < 5:
             continue
 
         grade = song.header[4].find("strong").text
@@ -60,4 +57,3 @@ def parse_ddr(songs: list[FlowerSongData], style: DDRStyle) -> dict:
         }
         json_data["scores"].append(song_data)
     return json_data
-
