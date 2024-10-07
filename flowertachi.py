@@ -30,10 +30,12 @@ SUPPORTED_GAMES = [
 def parse_numbers(nums_input: list[str]) -> list[int]:
     numbers = set()
     if not nums_input:
-        return []
+        return [1]
 
     for part in nums_input:
         try:
+            if part == "all":
+                return []
             if "-" in part:
                 start, end = map(int, part.split("-"))
                 numbers.update(range(start, end + 1))
@@ -57,7 +59,7 @@ def handle_arguments() -> argparse.Namespace:
         required=True,
     )
     parser.add_argument(
-        "-p", "--pages", nargs="*", help='Choose pages to import (e.g. "1-5 7 9")'
+        "-p", "--pages", nargs="*", help='Choose pages to import, defaults to first page (e.g. "1-5 7 9" "all")'
     )
     parser.add_argument(
         "-j",
