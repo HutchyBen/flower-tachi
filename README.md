@@ -3,6 +3,11 @@ A python tool for importing flower scores into kamaitachi
 
 ## How To Use
 -  modify config.py script variables to own
+    - `flower_session` is obtained from cookies on flower website
+        - Open inspect element
+        - Go to storage/application
+        - Go to cookies then https://projectflower.eu
+        - Use the value of the flower_session cookie
     - `TACHI_API_KEY` is optional. outputting to json still exists  
 - use -g flag to specify games to import
 - use -p flag to specify pages to import
