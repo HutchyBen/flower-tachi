@@ -2,8 +2,10 @@ from flower import parse_date
 from ft_types import Game, FlowerSongData
 from tachi import create_base
 
-#padding out by one
-medals = ["lazycoding", "failedCircle", "failedDiamond", "failedStar", "easyClear", "clearCircle", "clearDiamond", "clearStar", "fullComboCircle", "fullComboDiamond", "fullComboStar", "perfect"]
+# padding out by one
+medals = ["lazycoding", "failedCircle", "failedDiamond", "failedStar", "easyClear", "clearCircle", "clearDiamond",
+          "clearStar", "fullComboCircle", "fullComboDiamond", "fullComboStar", "perfect"]
+
 
 def parse_popn(songs: list[FlowerSongData], game: Game) -> dict:
     json_data = create_base(game.tachi_gpt)
