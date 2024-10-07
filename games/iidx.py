@@ -10,7 +10,7 @@ def _parse_diff(full_diff: str) -> tuple[str, str]:
 
     match full_diff[2]:
         case "B":
-            return mode, "NOPE!"
+            return mode, "BEGINNER"
         case "N":
             return mode, "NORMAL"
         case "H":
@@ -47,6 +47,8 @@ def parse_iidx(songs: list[FlowerSongData], game: Game) -> dict:
         graph_data = _parse_graph_script(song.iidx_script)
 
         diff = _parse_diff(song.header[4].find("b").previous_sibling.text.strip())
+        if diff == "BEGINNER":
+            continue
         judgements = [None, None, None, None, None, None, None]  # fast slow at end
 
         if game.tachi_gpt[1] != diff[0]:
