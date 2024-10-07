@@ -59,7 +59,10 @@ def handle_arguments() -> argparse.Namespace:
         required=True,
     )
     parser.add_argument(
-        "-p", "--pages", nargs="*", help='Choose pages to import, defaults to first page (e.g. "1-5 7 9" "all")'
+        "-p",
+        "--pages",
+        nargs="*",
+        help='Choose pages to import, defaults to first page (e.g. "1-5 7 9" "all")',
     )
     parser.add_argument(
         "-j",
@@ -107,8 +110,11 @@ if __name__ == "__main__":
         if args.json:
             filename = f"score_{game.tachi_gpt[0]}_{game.tachi_gpt[1]}.json"
             with open(filename, "w") as f:
-                print("Writing scores to", filename)
+                print(
+                    f"Writing {game.flower_name} ({game.tachi_gpt[1]}) scores to",
+                    filename,
+                )
                 json.dump(tachi_json, f, indent=4)
         else:
-            print("Sending score to tachi")
+            print(f"Uploading {game.flower_name} ({game.tachi_gpt[1]}) scores to tachi")
             submit_score(tachi_json)
