@@ -8,6 +8,7 @@ def parse_museca(songs: list[FlowerSongData], game: Game) -> dict:
 
     for song in songs:
         diff = ""
+        score = int(song.header[3].find("strong").text.strip().replace(",", ""))
         match song.header[2].find("b").previous_sibling.text.strip():
             case "朱":
                 diff = "Red"
@@ -20,10 +21,13 @@ def parse_museca(songs: list[FlowerSongData], game: Game) -> dict:
         if lamp == "CLEARED":
             lamp = "CLEAR"
 
+        if lamp == "FAILED" and score >= 800000:
+            lamp = "CLEAR"
+
         song_data = {
             "matchType": "inGameID",
             "identifier": song.url[7],
-            "score": int(song.header[3].find("strong").text.strip().replace(",", "")),
+            "score": score,
             "lamp": lamp,
             "difficulty": diff,
             "timeAchieved": parse_date(song.header[7].find("small").text),
