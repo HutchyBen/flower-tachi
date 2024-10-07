@@ -6,11 +6,13 @@ from flower import find_profile_url, parse_page
 from ft_types import Game
 from games.ddr import parse_ddr
 from games.gitadora import parse_gitadora
+from games.popn import parse_popn
 from tachi import submit_score
 
 SUPPORTED_GAMES = [
     Game("DanceDanceRevolution", ("ddr", "SP"), parse_ddr),
     Game("DanceDanceRevolution", ("ddr", "DP"), parse_ddr),
+    Game("pop'n music", ("popn", "9B"), parse_popn),
     Game("GITADORA", ("gitadora", "Dora"), parse_gitadora),
     Game("GITADORA", ("gitadora", "Gita"), parse_gitadora)
 ]
