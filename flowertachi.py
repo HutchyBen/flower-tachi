@@ -8,6 +8,7 @@ from games.ddr import parse_ddr
 from games.gitadora import parse_gitadora
 from games.iidx import parse_iidx
 from games.jubeat import parse_jubeat
+from games.museca import parse_museca
 from games.popn import parse_popn
 from tachi import submit_score
 
@@ -19,7 +20,8 @@ SUPPORTED_GAMES = [
     Game("GITADORA", ("gitadora", "Gita"), parse_gitadora),
     Game("Jubeat", ("jubeat", "Single"), parse_jubeat),
     Game("beatmania IIDX", ("iidx", "SP"), parse_iidx),
-    Game("beatmania IIDX", ("iidx", "DP"), parse_iidx)
+    Game("beatmania IIDX", ("iidx", "DP"), parse_iidx),
+    Game("MÚSECA", ("museca", "Single"), parse_museca)
 ]
 
 
