@@ -27,8 +27,14 @@ def parse_page(url: str) -> list[FlowerSongData]:
     songs: list[FlowerSongData] = list[FlowerSongData]()  # huh type checking complains if you use []
     song_row = soup.find_all("tr", class_="accordion-toggle")
 
+    index = 0
     for song in song_row:
-        songs.append(FlowerSongData(song))
+        if url.find("iidx") != -1:
+            script = soup.find_all("script")[index + 4].text
+        else:
+            script = None
+        songs.append(FlowerSongData(song, script))
+        index += 1
 
     paginator = soup.find("ul", class_="pagination")
     if paginator:
