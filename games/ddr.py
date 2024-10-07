@@ -3,28 +3,11 @@ from ft_types import Game, FlowerSongData
 from tachi import create_base
 
 
-def _get_difficulty_name(difficulty: int) -> str:
-    match difficulty:
-        case 0:
-            return "BEGINNER"
-        case 1 | 5:
-            return "BASIC"
-        case 2 | 6:
-            return "DIFFICULT"
-        case 3 | 7:
-            return "EXPERT"
-        case 4 | 8:
-            return "CHALLENGE"
-
-
 def parse_ddr(songs: list[FlowerSongData], game: Game) -> dict:
     json_data = create_base(game.tachi_gpt)
-    json_data["meta"]["version"] = "a3"
     for song in songs:
-        diff = int(song.url[8])
-        if game.tachi_gpt[1] == "SP" and diff >= 5:
-            continue
-        if game.tachi_gpt[1] == "DP" and diff < 5:
+        diff = song.header[2].find("br").previous_sibling.text.strip().split()
+        if game.tachi_gpt[1] is not diff[0]:
             continue
 
         grade = song.header[4].find("strong").text
@@ -43,7 +26,7 @@ def parse_ddr(songs: list[FlowerSongData], game: Game) -> dict:
             "identifier": song.url[7],
             "score": int(song.header[3].find("strong").text.strip().replace(",", "")),
             "lamp": lamp,
-            "difficulty": _get_difficulty_name(diff),
+            "difficulty": diff[1],
             "timeAchieved": parse_date(song.header[8].find("small").text),
             "judgements": {
                 "MARVELOUS": int(song.accordion[6].find_all("div")[0].find("br").next_sibling.text.strip()),
