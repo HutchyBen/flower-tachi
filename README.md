@@ -14,6 +14,7 @@ A python tool for importing flower scores into kamaitachi
 - pop'n music
 - beatmania IIDX (SP/DP)
 - Sound Voltex
+- MÚSECA
 
 ## TODO (in order of priority)
 - An easy-to-use CLI
