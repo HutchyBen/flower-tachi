@@ -10,6 +10,7 @@ from games.iidx import parse_iidx
 from games.jubeat import parse_jubeat
 from games.museca import parse_museca
 from games.popn import parse_popn
+from games.sound_voltex import parse_sdvx
 from tachi import submit_score
 
 SUPPORTED_GAMES = [
@@ -21,7 +22,8 @@ SUPPORTED_GAMES = [
     Game("Jubeat", ("jubeat", "Single"), parse_jubeat),
     Game("beatmania IIDX", ("iidx", "SP"), parse_iidx),
     Game("beatmania IIDX", ("iidx", "DP"), parse_iidx),
-    Game("MÚSECA", ("museca", "Single"), parse_museca)
+    Game("MÚSECA", ("museca", "Single"), parse_museca),
+    Game("Sound Voltex", ("sdvx", "Single"), parse_sdvx)
 ]
 
 
