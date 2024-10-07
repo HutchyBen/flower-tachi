@@ -4,8 +4,18 @@ A python tool for importing flower scores into kamaitachi
 ## How To Use
 -  modify config.py script variables to own
     - `TACHI_API_KEY` is optional. outputting to json still exists  
-- run flowertachi.py with a list of tachi GPTstring or all
-- success!
+- run flowertachi.py with -g flag containing game of score to submit
+- use -p flag to specify pages
+- use -j flag to output json instead of directly importing to tachi
+
+## Example
+### Import page 1 to 3 of IIDX single play scores
+`python flowertachi.py -g iidx:SP -p 1-3` 
+### Import every DDR singles and doubles score
+`python flowertachi.py -g ddr:SP ddr:DP`
+> [!CAUTION]
+> If you have lots of scores this will send lots of requests to flower. Be nice to them and don't end up sending loads of requsts
+
 
 ## Supported Games
 - DanceDanceRevolution (SP/DP)
@@ -17,6 +27,5 @@ A python tool for importing flower scores into kamaitachi
 - MÚSECA
 
 ## TODO (in order of priority)
-- An easy-to-use CLI
 - A fancy TUI
 - Maybe support login (I use a hardware key 2fa so :/)
