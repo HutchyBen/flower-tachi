@@ -7,7 +7,7 @@ def parse_ddr(songs: list[FlowerSongData], game: Game) -> dict:
     json_data = create_base(game.tachi_gpt)
     for song in songs:
         diff = song.header[2].find("br").previous_sibling.text.strip().split()
-        if game.tachi_gpt[1] is not diff[0]:
+        if game.tachi_gpt[1] != diff[0]:
             continue
 
         grade = song.header[4].find("strong").text

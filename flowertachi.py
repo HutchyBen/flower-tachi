@@ -2,7 +2,7 @@ import argparse
 import json
 
 from config import FLOWER_SESSION, TACHI_API_KEY
-from flower import find_profile_url, parse_page
+from flower import find_profile_url, parse_pages
 from ft_types import Game
 from games.ddr import parse_ddr
 from games.gitadora import parse_gitadora
@@ -26,13 +26,33 @@ SUPPORTED_GAMES = [
     Game("Sound Voltex", ("sdvx", "Single"), parse_sdvx)
 ]
 
+def parse_numbers(nums_input: list[str]) -> list[int]:
+    numbers = set()
+    if not nums_input:
+        return []
+
+    for part in nums_input:
+        try:
+            if '-' in part:
+                start, end = map(int, part.split('-'))
+                numbers.update(range(start, end + 1))
+            else:
+                numbers.add(int(part))
+        except ValueError:
+            print("Invalid number entered")
+            exit(1)
+    return sorted(numbers)
 
 def handle_arguments() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
-    parser.add_argument("games",
+    parser.add_argument("-g", "--games",
                         nargs="+",
                         choices=[f"{g.tachi_gpt[0]}:{g.tachi_gpt[1]}" for g in SUPPORTED_GAMES] + ["all"],
-                        help="Choose one or more games to import, or 'all' for all games")
+                        help="Choose one or more games to import, or 'all' for all games",
+                        required=True)
+    parser.add_argument("-p", "--pages",
+                        nargs="*",
+                        help="Choose pages to import (e.g. \"1-5 7 9\")")
     parser.add_argument("-j", "--json",
                         action="store_true",
                         help="Output JSON file instead of uploading to tachi")
@@ -42,6 +62,8 @@ def handle_arguments() -> argparse.Namespace:
     else:
         args.games = [g for g in SUPPORTED_GAMES
                       if f"{g.tachi_gpt[0]}:{g.tachi_gpt[1]}" in args.games]
+
+    args.pages = parse_numbers(args.pages)
 
     return args
 
@@ -62,7 +84,7 @@ if __name__ == "__main__":
     for game in args.games:
         if game.flower_name not in page_cache:
             url = find_profile_url(game)
-            page_data = parse_page(url)
+            page_data = parse_pages(url, args.pages)
             page_cache[game.flower_name] = page_data
 
         tachi_json = game.parse(page_cache[game.flower_name])
