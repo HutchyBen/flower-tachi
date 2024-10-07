@@ -22,7 +22,9 @@ def find_profile_url(game: Game):
     return button["href"]
 
 
-def _parse_page(page_songs: ResultSet, page: BeautifulSoup, iidx: bool) -> list[FlowerSongData]:
+def _parse_page(
+    page_songs: ResultSet, page: BeautifulSoup, iidx: bool
+) -> list[FlowerSongData]:
     index = 0
     songs: list[FlowerSongData] = list[FlowerSongData]()
     for song in page_songs:
@@ -35,7 +37,9 @@ def _parse_page(page_songs: ResultSet, page: BeautifulSoup, iidx: bool) -> list[
 
 
 def parse_pages(url: str, pages: list[int]) -> list[FlowerSongData]:
-    songs: list[FlowerSongData] = list[FlowerSongData]()  # huh type checking complains if you use []
+    songs: list[FlowerSongData] = list[
+        FlowerSongData
+    ]()  # huh type checking complains if you use []
 
     for page in pages:
         soup = flower_get(f"{url}?page={page}")

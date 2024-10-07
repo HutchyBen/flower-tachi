@@ -11,7 +11,9 @@ def parse_ddr(songs: list[FlowerSongData], game: Game) -> dict:
             continue
 
         grade = song.header[4].find("strong").text
-        lamp = "FAILED" if grade == "E" else "CLEAR"  # TOOO: not sure how to handle assist or life4 yet
+        lamp = (
+            "FAILED" if grade == "E" else "CLEAR"
+        )  # TOOO: not sure how to handle assist or life4 yet
         clear_type = song.header[5].find("small")
         if clear_type:
             lamp = clear_type["title"]
@@ -29,13 +31,48 @@ def parse_ddr(songs: list[FlowerSongData], game: Game) -> dict:
             "difficulty": diff[1],
             "timeAchieved": parse_date(song.header[8].find("small").text),
             "judgements": {
-                "MARVELOUS": int(song.accordion[6].find_all("div")[0].find("br").next_sibling.text.strip()),
-                "PERFECT": int(song.accordion[6].find_all("div")[1].find("br").next_sibling.text.strip()),
-                "GREAT": int(song.accordion[6].find_all("div")[2].find("br").next_sibling.text.strip()),
-                "GOOD": int(song.accordion[6].find_all("div")[3].find("br").next_sibling.text.strip()),
-                "MISS": int(song.accordion[6].find_all("div")[5].find("br").next_sibling.text.strip()) + int(
-                    song.accordion[6].find_all("div")[6].find("br").next_sibling.text.strip()),
-                "OK": int(song.accordion[6].find_all("div")[4].find("br").next_sibling.text.strip()),
+                "MARVELOUS": int(
+                    song.accordion[6]
+                    .find_all("div")[0]
+                    .find("br")
+                    .next_sibling.text.strip()
+                ),
+                "PERFECT": int(
+                    song.accordion[6]
+                    .find_all("div")[1]
+                    .find("br")
+                    .next_sibling.text.strip()
+                ),
+                "GREAT": int(
+                    song.accordion[6]
+                    .find_all("div")[2]
+                    .find("br")
+                    .next_sibling.text.strip()
+                ),
+                "GOOD": int(
+                    song.accordion[6]
+                    .find_all("div")[3]
+                    .find("br")
+                    .next_sibling.text.strip()
+                ),
+                "MISS": int(
+                    song.accordion[6]
+                    .find_all("div")[5]
+                    .find("br")
+                    .next_sibling.text.strip()
+                )
+                + int(
+                    song.accordion[6]
+                    .find_all("div")[6]
+                    .find("br")
+                    .next_sibling.text.strip()
+                ),
+                "OK": int(
+                    song.accordion[6]
+                    .find_all("div")[4]
+                    .find("br")
+                    .next_sibling.text.strip()
+                ),
             },
         }
         json_data["scores"].append(song_data)

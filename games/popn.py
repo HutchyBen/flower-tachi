@@ -3,8 +3,20 @@ from ft_types import Game, FlowerSongData
 from tachi import create_base
 
 # padding out by one
-medals = ["lazycoding", "failedCircle", "failedDiamond", "failedStar", "easyClear", "clearCircle", "clearDiamond",
-          "clearStar", "fullComboCircle", "fullComboDiamond", "fullComboStar", "perfect"]
+medals = [
+    "lazycoding",
+    "failedCircle",
+    "failedDiamond",
+    "failedStar",
+    "easyClear",
+    "clearCircle",
+    "clearDiamond",
+    "clearStar",
+    "fullComboCircle",
+    "fullComboDiamond",
+    "fullComboStar",
+    "perfect",
+]
 
 
 def parse_popn(songs: list[FlowerSongData], game: Game) -> dict:
@@ -17,7 +29,9 @@ def parse_popn(songs: list[FlowerSongData], game: Game) -> dict:
             "matchType": "inGameID",
             "identifier": song.url[7],
             "score": int(song.header[3].find("div").text.strip()),
-            "clearMedal": medals[int(song.header[2].find("img")["src"].split("_")[-1][:-4])],
+            "clearMedal": medals[
+                int(song.header[2].find("img")["src"].split("_")[-1][:-4])
+            ],
             "difficulty": diff_name,
             "timeAchieved": parse_date(song.header[5].find("small").text),
             "judgements": {

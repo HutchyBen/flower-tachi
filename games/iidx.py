@@ -32,10 +32,12 @@ def _parse_graph_script(script: str) -> dict:
 
     options = json5.loads(script[start:end])
     gauge = [data["y"] for data in datasets[0]["data"]]
-    scores = [min(110, data) / 1.1 for data in datasets[1]["data"]]  # max is 110 not 100 which tachi expects
+    scores = [
+        min(110, data) / 1.1 for data in datasets[1]["data"]
+    ]  # max is 110 not 100 which tachi expects
     return {
         "score": scores,
-        "gauge": (gauge + options["max"] * [None])[:options["max"]]
+        "gauge": (gauge + options["max"] * [None])[: options["max"]],
     }
 
 
@@ -80,10 +82,12 @@ def parse_iidx(songs: list[FlowerSongData], game: Game) -> dict:
             "optional": {
                 "gaugeHistory": graph_data["gauge"],
                 "scoreHistory": graph_data["score"],
-                "gauge": 0 if graph_data["gauge"][-1] is None else graph_data["gauge"][-1],
+                "gauge": (
+                    0 if graph_data["gauge"][-1] is None else graph_data["gauge"][-1]
+                ),
                 "fast": judgements[5],
                 "slow": judgements[6],
-            }
+            },
         }
         json_data["scores"].append(song_data)
     return json_data
