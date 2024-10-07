@@ -43,7 +43,6 @@ def parse_iidx(songs: list[FlowerSongData], game: Game) -> dict:
     json_data = create_base(game.tachi_gpt)
 
     for song in songs:
-
         graph_data = _parse_graph_script(song.iidx_script)
 
         diff = _parse_diff(song.header[4].find("b").previous_sibling.text.strip())

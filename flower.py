@@ -1,7 +1,7 @@
 from datetime import datetime
 
 import requests
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, ResultSet
 
 from config import FLOWER_SESSION
 from ft_types import FlowerSongData, Game
@@ -22,25 +22,45 @@ def find_profile_url(game: Game):
     return button["href"]
 
 
-def parse_page(url: str) -> list[FlowerSongData]:
-    soup = flower_get(url)
-    songs: list[FlowerSongData] = list[FlowerSongData]()  # huh type checking complains if you use []
-    song_row = soup.find_all("tr", class_="accordion-toggle")
-
+def _parse_page(page_songs: ResultSet, page: BeautifulSoup, iidx: bool) -> list[FlowerSongData]:
     index = 0
-    for song in song_row:
-        if url.find("iidx") != -1:
-            script = soup.find_all("script")[index + 4].text
+    songs: list[FlowerSongData] = list[FlowerSongData]()
+    for song in page_songs:
+        if iidx:
+            script = page.find_all("script")[index + 4].text
         else:
             script = None
         songs.append(FlowerSongData(song, script))
-        index += 1
+    return songs
 
-    paginator = soup.find("ul", class_="pagination")
-    if paginator:
-        next_button = paginator.find_all("li")[-1].find("a")
-        if next_button:
-            songs.extend(parse_page(next_button["href"]))
+
+def parse_pages(url: str, pages: list[int]) -> list[FlowerSongData]:
+    songs: list[FlowerSongData] = list[FlowerSongData]()  # huh type checking complains if you use []
+
+    for page in pages:
+        soup = flower_get(f"{url}?page={page}")
+        song_row = soup.find_all("tr", class_="accordion-toggle")
+        if len(song_row) == 0:
+            return songs
+        songs.extend(_parse_page(song_row, soup, "iidx" in url))
+
+    if len(pages) == 0:
+        # I WANT DO WHILE
+        soup = flower_get(url)
+        song_row = soup.find_all("tr", class_="accordion-toggle")
+        while len(song_row) > 0:
+            songs.extend(_parse_page(song_row, soup, "iidx" in url))
+
+            paginator = soup.find("ul", class_="pagination")
+            if not paginator:
+                return songs
+
+            next_button = paginator.find_all("li")[-1].find("a")
+            if not next_button:
+                return songs
+
+            soup = flower_get(next_button["href"])
+            song_row = soup.find_all("tr", class_="accordion-toggle")
 
     return songs
 
