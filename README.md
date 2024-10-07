@@ -10,10 +10,12 @@ A python tool for importing flower scores into kamaitachi
 ## Supported Games
 - DanceDanceRevolution (SP/DP)
 - GITADORA (Guitar/Drum/Bass)
+- jubeat
+- pop'n music
+- IIDX (SP/DP)
 
 ## TODO (in order of priority)
 - Support as many games
-- Cleaner profile URL system (perhaps using flower session)
 - An easy-to-use CLI
 - A fancy TUI
 - Maybe support login (I use a hardware key 2fa so :/)
