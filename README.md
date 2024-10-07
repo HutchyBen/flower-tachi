@@ -24,7 +24,3 @@ A python tool for importing flower scores into kamaitachi
 - beatmania IIDX (SP/DP)
 - Sound Voltex
 - MÚSECA
-
-## TODO (in order of priority)
-- A fancy TUI
-- Maybe support login (I use a hardware key 2fa so :/)
