@@ -4,11 +4,12 @@ from bs4 import BeautifulSoup
 
 
 class FlowerSongData:
-    def __init__(self, song_element: BeautifulSoup) -> None:
+    def __init__(self, song_element: BeautifulSoup, iidx_script: str) -> None:
         self.url = song_element.find("a")["href"].split("/")
         self.header = song_element.find_all("td")
         accordion_div = song_element.parent.find("div", id=song_element["data-target"][1:])  # to remove padding div
         self.accordion = accordion_div.find("div", recursive=False).find_all("div", recursive=False)
+        self.iidx_script = iidx_script
 
 
 class Game(object):
