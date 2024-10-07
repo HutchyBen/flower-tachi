@@ -19,7 +19,8 @@ def parse_jubeat(songs: list[FlowerSongData], game: Game) -> dict:
             "score": int(song.header[3].find("small").text.strip()),
             "musicRate": float(song.header[4].find("strong").text.strip()[:-1]),
             "lamp": song.header[5].find("strong").text.upper(),
-            "difficulty": ("HARD " if is_hard else "") + song.header[2].find("strong").previous_sibling.text.strip(),
+            "difficulty": ("HARD " if is_hard else "")
+            + song.header[2].find("strong").previous_sibling.text.strip(),
             "timeAchieved": parse_date(song.header[7].find("small").text),
             "judgements": {
                 "perfect": judgements[0],
@@ -29,8 +30,10 @@ def parse_jubeat(songs: list[FlowerSongData], game: Game) -> dict:
                 "miss": judgements[4],
             },
             "optional": {
-                "musicBar": list(map(float, song.accordion[0]["data-jubeat-judge"].split(" ")))
-            }
+                "musicBar": list(
+                    map(float, song.accordion[0]["data-jubeat-judge"].split(" "))
+                )
+            },
         }
         json_data["scores"].append(song_data)
     return json_data

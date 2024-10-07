@@ -23,8 +23,9 @@ SUPPORTED_GAMES = [
     Game("beatmania IIDX", ("iidx", "SP"), parse_iidx),
     Game("beatmania IIDX", ("iidx", "DP"), parse_iidx),
     Game("MÚSECA", ("museca", "Single"), parse_museca),
-    Game("Sound Voltex", ("sdvx", "Single"), parse_sdvx)
+    Game("Sound Voltex", ("sdvx", "Single"), parse_sdvx),
 ]
+
 
 def parse_numbers(nums_input: list[str]) -> list[int]:
     numbers = set()
@@ -33,8 +34,8 @@ def parse_numbers(nums_input: list[str]) -> list[int]:
 
     for part in nums_input:
         try:
-            if '-' in part:
-                start, end = map(int, part.split('-'))
+            if "-" in part:
+                start, end = map(int, part.split("-"))
                 numbers.update(range(start, end + 1))
             else:
                 numbers.add(int(part))
@@ -43,25 +44,36 @@ def parse_numbers(nums_input: list[str]) -> list[int]:
             exit(1)
     return sorted(numbers)
 
+
 def handle_arguments() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
-    parser.add_argument("-g", "--games",
-                        nargs="+",
-                        choices=[f"{g.tachi_gpt[0]}:{g.tachi_gpt[1]}" for g in SUPPORTED_GAMES] + ["all"],
-                        help="Choose one or more games to import, or 'all' for all games",
-                        required=True)
-    parser.add_argument("-p", "--pages",
-                        nargs="*",
-                        help="Choose pages to import (e.g. \"1-5 7 9\")")
-    parser.add_argument("-j", "--json",
-                        action="store_true",
-                        help="Output JSON file instead of uploading to tachi")
+    parser.add_argument(
+        "-g",
+        "--games",
+        nargs="+",
+        choices=[f"{g.tachi_gpt[0]}:{g.tachi_gpt[1]}" for g in SUPPORTED_GAMES]
+        + ["all"],
+        help="Choose one or more games to import, or 'all' for all games",
+        required=True,
+    )
+    parser.add_argument(
+        "-p", "--pages", nargs="*", help='Choose pages to import (e.g. "1-5 7 9")'
+    )
+    parser.add_argument(
+        "-j",
+        "--json",
+        action="store_true",
+        help="Output JSON file instead of uploading to tachi",
+    )
     args = parser.parse_args()
     if "all" in args.games:
         args.games = SUPPORTED_GAMES
     else:
-        args.games = [g for g in SUPPORTED_GAMES
-                      if f"{g.tachi_gpt[0]}:{g.tachi_gpt[1]}" in args.games]
+        args.games = [
+            g
+            for g in SUPPORTED_GAMES
+            if f"{g.tachi_gpt[0]}:{g.tachi_gpt[1]}" in args.games
+        ]
 
     args.pages = parse_numbers(args.pages)
 
@@ -76,7 +88,9 @@ if __name__ == "__main__":
     args = handle_arguments()
 
     if not args.json and TACHI_API_KEY == "":
-        print("TACHI_API_KEY is not present in config. Please use --json or provide an API KEY")
+        print(
+            "TACHI_API_KEY is not present in config. Please use --json or provide an API KEY"
+        )
         exit(1)
 
     # games with different playtypes come up in same list and dont wanna flood flower with requests

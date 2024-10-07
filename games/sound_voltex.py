@@ -30,7 +30,7 @@ def parse_sdvx(songs: list[FlowerSongData], game: Game) -> dict:
                 "fast": int(fast_slow[0]),
                 "slow": int(fast_slow[1]),
                 "maxCombo": int(song.accordion[6].find("br").next_sibling.text.strip()),
-            }
+            },
         }
         json_data["scores"].append(song_data)
     return json_data
