@@ -18,18 +18,16 @@ def parse_museca(songs: list[FlowerSongData], game: Game) -> dict:
                 diff = "Green"
 
         lamp = song.header[5].find("strong").text.strip()
-        
+
         # convert flower name to tachi
         if lamp == "CLEARED":
             lamp = "CLEAR"
-        
+
         # in tachi scores much alays follow 800k is always clear
         if score < 800000:
             lamp = "FAILED"
         elif lamp == "FAILED":
             lamp = "CLEAR"
-
-
 
         song_data = {
             "matchType": "inGameID",

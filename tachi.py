@@ -1,7 +1,14 @@
+from datetime import datetime
+
 import requests
 from requests import Response
 
-from config import TACHI_BASE_URL, TACHI_API_KEY, TACHI_IMPORT_ENDPOINT
+from config import (
+    TACHI_BASE_URL,
+    TACHI_API_KEY,
+    TACHI_IMPORT_ENDPOINT,
+    TACHI_LATEST_SESSION_ENDPOINT,
+)
 
 
 def create_base(gpt: tuple[str, str]) -> dict:
@@ -16,3 +23,14 @@ def submit_score(json_data: dict) -> Response:
     return requests.post(
         TACHI_BASE_URL + TACHI_IMPORT_ENDPOINT, json=json_data, headers=headers
     )
+
+
+def get_recent_session(ugpt: tuple[str, str]) -> datetime.date:
+    headers = {"Authorization": "Bearer " + TACHI_API_KEY}
+    res = requests.get(
+        TACHI_BASE_URL + TACHI_LATEST_SESSION_ENDPOINT.format("me", ugpt[0], ugpt[1]),
+        headers=headers,
+    )
+    if res.status_code != 200:
+        raise Exception("no session found")
+    return res.json()
