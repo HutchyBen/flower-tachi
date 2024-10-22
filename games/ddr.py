@@ -4,6 +4,7 @@ from tachi import create_base
 
 FLARE_TEXT = ["0", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "EX"]
 
+
 def parse_ddr(songs: list[FlowerSongData], game: Game) -> dict:
     json_data = create_base(game.tachi_gpt)
     for song in songs:
@@ -25,7 +26,6 @@ def parse_ddr(songs: list[FlowerSongData], game: Game) -> dict:
                 lamp = "FULL COMBO"
 
         flare_str = song.header[6].find("strong").text.strip()
-
 
         song_data = {
             "matchType": "inGameID",
@@ -80,7 +80,7 @@ def parse_ddr(songs: list[FlowerSongData], game: Game) -> dict:
             },
             "optional": {
                 "flare": FLARE_TEXT[int(flare_str)] if flare_str != "" else "0",
-            }
+            },
         }
         json_data["scores"].append(song_data)
     return json_data

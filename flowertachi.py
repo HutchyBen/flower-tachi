@@ -2,7 +2,7 @@ import argparse
 import json
 
 from config import FLOWER_SESSION, TACHI_API_KEY
-from flower import find_profile_url, parse_pages
+from flower import parse_pages
 from ft_types import Game
 from games.ddr import parse_ddr
 from games.gitadora import parse_gitadora
@@ -27,7 +27,7 @@ SUPPORTED_GAMES = [
 ]
 
 
-def parse_numbers(nums_input: list[str]) -> list[int]:
+def parse_numbers(nums_input: list[str]) -> list[int] | str:
     numbers = set()
     if not nums_input:
         return [1]
@@ -35,7 +35,9 @@ def parse_numbers(nums_input: list[str]) -> list[int]:
     for part in nums_input:
         try:
             if part == "all":
-                return []
+                return "all"
+            elif part == "recent":
+                return "recent"
             if "-" in part:
                 start, end = map(int, part.split("-"))
                 numbers.update(range(start, end + 1))
@@ -62,7 +64,7 @@ def handle_arguments() -> argparse.Namespace:
         "-p",
         "--pages",
         nargs="*",
-        help='Choose pages to import, defaults to first page (e.g. "1-5 7 9" "all")',
+        help='Choose pages to import, defaults to first page. "all" for all pages, "recent" for pages since last session (e.g. "1-5 7 9")',
     )
     parser.add_argument(
         "-j",
@@ -102,10 +104,8 @@ if __name__ == "__main__":
     page_cache = {}
     for game in args.games:
         if game.flower_name not in page_cache:
-            url = find_profile_url(game)
-            page_data = parse_pages(url, args.pages)
+            page_data = parse_pages(game, args.pages)
             page_cache[game.flower_name] = page_data
-
         tachi_json = game.parse(page_cache[game.flower_name])
         if args.json:
             filename = f"score_{game.tachi_gpt[0]}_{game.tachi_gpt[1]}.json"

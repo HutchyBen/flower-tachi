@@ -5,6 +5,7 @@ from bs4 import BeautifulSoup, ResultSet
 
 from config import FLOWER_SESSION
 from ft_types import FlowerSongData, Game
+from tachi import get_recent_session
 
 
 def flower_get(url: str) -> BeautifulSoup:
@@ -36,10 +37,65 @@ def _parse_page(
     return songs
 
 
-def parse_pages(url: str, pages: list[int]) -> list[FlowerSongData]:
+class iter_pages(object):
+    def __init__(self, start_url):
+        self.url = start_url
+        self.soup = None
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        return self.next()
+
+    def next(self):
+        if self.soup is not None:
+            paginator = self.soup.find("ul", class_="pagination")
+            if not paginator:
+                raise StopIteration()
+
+            next_button = paginator.find_all("li")[-1].find("a")
+            if not next_button:
+                raise StopIteration()
+            self.url = next_button["href"]
+
+        self.soup = flower_get(self.url)
+        song_row = self.soup.find_all("tr", class_="accordion-toggle")
+        if len(song_row) == 0:
+            raise StopIteration()
+
+        return _parse_page(song_row, self.soup, "iidx" in self.url)
+
+
+def parse_pages(game: Game, pages: list[int]) -> list[FlowerSongData]:
+    url = find_profile_url(game)
+
     songs: list[FlowerSongData] = list[
         FlowerSongData
     ]()  # huh type checking complains if you use []
+
+    if pages == "all":
+        for page in iter_pages(url):
+            songs.extend(page)
+        return songs
+
+    if pages == "recent":
+        date: datetime.date
+        try:
+            session = get_recent_session(game.tachi_gpt)
+            date = datetime.fromtimestamp(
+                session["body"]["session"]["timeEnded"] / 1000
+            )
+        except RuntimeError:
+            print("Could not find any sessions. Aborting")
+            exit(1)
+        for page in iter_pages(url):
+            songs.extend(page)
+
+            oldest_song = songs[-1].header[-1].find("small").text
+            oldest_date = datetime.strptime(oldest_song, "%Y-%m-%d %I:%M %p")
+            if oldest_date < date:
+                return songs
 
     for page in pages:
         soup = flower_get(f"{url}?page={page}")
@@ -47,25 +103,6 @@ def parse_pages(url: str, pages: list[int]) -> list[FlowerSongData]:
         if len(song_row) == 0:
             return songs
         songs.extend(_parse_page(song_row, soup, "iidx" in url))
-
-    if len(pages) == 0:
-        # I WANT DO WHILE
-        soup = flower_get(url)
-        song_row = soup.find_all("tr", class_="accordion-toggle")
-        while len(song_row) > 0:
-            songs.extend(_parse_page(song_row, soup, "iidx" in url))
-
-            paginator = soup.find("ul", class_="pagination")
-            if not paginator:
-                return songs
-
-            next_button = paginator.find_all("li")[-1].find("a")
-            if not next_button:
-                return songs
-
-            soup = flower_get(next_button["href"])
-            song_row = soup.find_all("tr", class_="accordion-toggle")
-
     return songs
 
 
