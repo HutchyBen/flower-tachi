@@ -37,34 +37,21 @@ def _parse_page(
     return songs
 
 
-class iter_pages(object):
-    def __init__(self, start_url):
-        self.url = start_url
-        self.soup = None
-
-    def __iter__(self):
-        return self
-
-    def __next__(self):
-        return self.next()
-
-    def next(self):
-        if self.soup is not None:
-            paginator = self.soup.find("ul", class_="pagination")
-            if not paginator:
-                raise StopIteration()
-
-            next_button = paginator.find_all("li")[-1].find("a")
-            if not next_button:
-                raise StopIteration()
-            self.url = next_button["href"]
-
-        self.soup = flower_get(self.url)
-        song_row = self.soup.find_all("tr", class_="accordion-toggle")
+def iter_pages(start_url):
+    url = start_url
+    while True:
+        soup = flower_get(url)
+        song_row = soup.find_all("tr", class_="accordion-toggle")
         if len(song_row) == 0:
-            raise StopIteration()
-
-        return _parse_page(song_row, self.soup, "iidx" in self.url)
+            break
+        paginator = soup.find("ul", class_="pagination")
+        if not paginator:
+            break
+        next_button = paginator.find_all("li")[-1].find("a")
+        if not next_button:
+            break
+        url = next_button["href"]
+        yield _parse_page(song_row, soup, "iidx" in url)
 
 
 def parse_pages(game: Game, pages: list[int]) -> list[FlowerSongData]:
