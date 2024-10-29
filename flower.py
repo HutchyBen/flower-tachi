@@ -44,6 +44,8 @@ def iter_pages(start_url):
         song_row = soup.find_all("tr", class_="accordion-toggle")
         if len(song_row) == 0:
             break
+        yield _parse_page(song_row, soup, "iidx" in url)
+
         paginator = soup.find("ul", class_="pagination")
         if not paginator:
             break
@@ -51,7 +53,6 @@ def iter_pages(start_url):
         if not next_button:
             break
         url = next_button["href"]
-        yield _parse_page(song_row, soup, "iidx" in url)
 
 
 def parse_pages(game: Game, pages: list[int]) -> list[FlowerSongData]:
