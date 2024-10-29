@@ -1,29 +1,32 @@
 import argparse
 import json
+from io import TextIOWrapper
+from typing import List
 
 from config import FLOWER_SESSION, TACHI_API_KEY
 from flower import parse_pages
-from ft_types import Game
-from games.ddr import parse_ddr
-from games.gitadora import parse_gitadora
-from games.iidx import parse_iidx
-from games.jubeat import parse_jubeat
-from games.museca import parse_museca
-from games.popn import parse_popn
-from games.sound_voltex import parse_sdvx
+from ft_types import Game, Arguments
+from games.ddr import DanceDanceRevolution
+from games.gitadora import Gitadora
+from games.iidx import IIDX
+from games.jubeat import Jubeat
+from games.museca import Museca
+from games.popn import PopnMusic
+from games.sound_voltex import SoundVoltex
+
 from tachi import submit_score
 
-SUPPORTED_GAMES = [
-    Game("DanceDanceRevolution", ("ddr", "SP"), parse_ddr),
-    Game("DanceDanceRevolution", ("ddr", "DP"), parse_ddr),
-    Game("pop'n music", ("popn", "9B"), parse_popn),
-    Game("GITADORA", ("gitadora", "Dora"), parse_gitadora),
-    Game("GITADORA", ("gitadora", "Gita"), parse_gitadora),
-    Game("Jubeat", ("jubeat", "Single"), parse_jubeat),
-    Game("beatmania IIDX", ("iidx", "SP"), parse_iidx),
-    Game("beatmania IIDX", ("iidx", "DP"), parse_iidx),
-    Game("MÚSECA", ("museca", "Single"), parse_museca),
-    Game("Sound Voltex", ("sdvx", "Single"), parse_sdvx),
+SUPPORTED_GAMES: List[Game] = [
+    DanceDanceRevolution("SP"),
+    DanceDanceRevolution("DP"),
+    PopnMusic(),
+    Gitadora("Gita"),
+    Gitadora("Dora"),
+    Jubeat(),
+    IIDX("SP"),
+    IIDX("DP"),
+    Museca(),
+    SoundVoltex(),
 ]
 
 
@@ -49,7 +52,7 @@ def parse_numbers(nums_input: list[str]) -> list[int] | str:
     return sorted(numbers)
 
 
-def handle_arguments() -> argparse.Namespace:
+def handle_arguments() -> Arguments:
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "-g",
@@ -72,19 +75,17 @@ def handle_arguments() -> argparse.Namespace:
         action="store_true",
         help="Output JSON file instead of uploading to tachi",
     )
-    args = parser.parse_args()
-    if "all" in args.games:
-        args.games = SUPPORTED_GAMES
+    parsed = parser.parse_args()
+    if "all" in parsed.games:
+        games = SUPPORTED_GAMES
     else:
-        args.games = [
+        games = [
             g
             for g in SUPPORTED_GAMES
-            if f"{g.tachi_gpt[0]}:{g.tachi_gpt[1]}" in args.games
+            if f"{g.tachi_gpt[0]}:{g.tachi_gpt[1]}" in parsed.games
         ]
 
-    args.pages = parse_numbers(args.pages)
-
-    return args
+    return Arguments(games, parse_numbers(parsed.pages), parsed.json)
 
 
 if __name__ == "__main__":
@@ -109,7 +110,7 @@ if __name__ == "__main__":
         tachi_json = game.parse(page_cache[game.flower_name])
         if args.json:
             filename = f"score_{game.tachi_gpt[0]}_{game.tachi_gpt[1]}.json"
-            with open(filename, "w") as f:
+            with open(filename, "w") as f:  # type: TextIOWrapper
                 print(
                     f"Writing {game.flower_name} ({game.tachi_gpt[1]}) scores to",
                     filename,
