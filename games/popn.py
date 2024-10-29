@@ -26,6 +26,9 @@ class PopnMusic(Game):
     def parse(self, songs: list[FlowerSongData]) -> dict:
         json_data = create_base(self.tachi_gpt)
         for song in songs:
+            if "BATTLE" in song.header[1].find("b").text:
+                continue
+
             diff_name = song.header[1].find("br").next_sibling.text.strip()
             if diff_name != "EX":
                 diff_name = diff_name.capitalize()
