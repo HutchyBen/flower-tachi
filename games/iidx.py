@@ -19,6 +19,7 @@ def _parse_diff(full_diff: str) -> tuple[str, str]:
     }
     return mode, diff_map[full_diff[2]]
 
+
 def _parse_graph_script(script: str) -> dict:
     start = script.find("= {") + 2
     end = script.find("};") + 1
