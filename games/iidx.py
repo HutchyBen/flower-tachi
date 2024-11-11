@@ -1,7 +1,7 @@
 from typing import Literal
 
 # needed for easy parsing of the data in JS scripts which flower generates graphs from
-import json5
+import pyjson5 as json5
 
 from flower import parse_date
 from ft_types import Game, FlowerSongData
@@ -18,7 +18,6 @@ def _parse_diff(full_diff: str) -> tuple[str, str]:
         "L": "LEGGENDARIA",
     }
     return mode, diff_map[full_diff[2]]
-
 
 def _parse_graph_script(script: str) -> dict:
     start = script.find("= {") + 2
@@ -48,15 +47,16 @@ class IIDX(Game):
         json_data = create_base(self.tachi_gpt)
 
         for song in songs:
-            graph_data = _parse_graph_script(song.iidx_script)
-
             diff = _parse_diff(song.header[4].find("b").previous_sibling.text.strip())
             if diff == "BEGINNER":
                 continue
-            judgements = [None, None, None, None, None, None, None]  # fast slow at end
 
             if self.tachi_gpt[1] != diff[0]:
                 continue
+
+            graph_data = _parse_graph_script(song.iidx_script)
+            judgements = [None, None, None, None, None, None, None]  # fast slow at end
+
             try:
                 j = song.accordion[2].find("small").text[1:-1].split()
                 judgements[0] = int(j[0])
