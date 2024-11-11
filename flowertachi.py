@@ -105,7 +105,9 @@ if __name__ == "__main__":
 
         tachi_json = game.parse(songs)
         if len(tachi_json["scores"]) == 0:
-            print(f"No new scores for {game.flower_name} ({game.tachi_gpt[1]}). Skipping")
+            print(
+                f"No new scores for {game.flower_name} ({game.tachi_gpt[1]}). Skipping"
+            )
             continue
 
         if args.json:

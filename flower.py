@@ -14,6 +14,7 @@ def flower_get(url: str) -> BeautifulSoup:
     res = s.get(url)
     return BeautifulSoup(res.text, "html.parser")
 
+
 # This now stores the home page so a request isnt made for every single playtype
 def find_profile_url(game: Game):
     if find_profile_url.home_page is None:
@@ -23,7 +24,10 @@ def find_profile_url(game: Game):
     if button is None:
         raise Exception("Game not found on your profile")
     return button["href"]
+
+
 find_profile_url.home_page = None
+
 
 def _should_score_exist(score: FlowerSongData, date: datetime) -> bool:
     recent_song = score.header[-1].find("small").text
@@ -32,7 +36,7 @@ def _should_score_exist(score: FlowerSongData, date: datetime) -> bool:
 
 
 def _parse_page(
-        page_songs: ResultSet, page: BeautifulSoup, iidx: bool
+    page_songs: ResultSet, page: BeautifulSoup, iidx: bool
 ) -> list[FlowerSongData]:
     index = 0
     songs: list[FlowerSongData] = list[FlowerSongData]()
@@ -68,7 +72,10 @@ def iter_pages(start_url):
             iter_pages.page_cache[url] = (parsed, next_url)
             yield parsed
             url = next_url
+
+
 iter_pages.page_cache = {}
+
 
 def parse_pages(game: Game, pages: list[int]) -> list[FlowerSongData]:
     url = find_profile_url(game)
