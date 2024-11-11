@@ -14,17 +14,25 @@ def flower_get(url: str) -> BeautifulSoup:
     res = s.get(url)
     return BeautifulSoup(res.text, "html.parser")
 
-
+# This now stores the home page so a request isnt made for every single playtype
 def find_profile_url(game: Game):
-    soup = flower_get("https://projectflower.eu")
-    button = soup.find("a", attrs={"title": game.flower_name})
+    if find_profile_url.home_page is None:
+        find_profile_url.home_page = flower_get("https://projectflower.eu")
+
+    button = find_profile_url.home_page.find("a", attrs={"title": game.flower_name})
     if button is None:
         raise Exception("Game not found on your profile")
     return button["href"]
+find_profile_url.home_page = None
+
+def _should_score_exist(score: FlowerSongData, date: datetime) -> bool:
+    recent_song = score.header[-1].find("small").text
+    recent_date = datetime.strptime(recent_song, "%Y-%m-%d %I:%M %p")
+    return recent_date <= date
 
 
 def _parse_page(
-    page_songs: ResultSet, page: BeautifulSoup, iidx: bool
+        page_songs: ResultSet, page: BeautifulSoup, iidx: bool
 ) -> list[FlowerSongData]:
     index = 0
     songs: list[FlowerSongData] = list[FlowerSongData]()
@@ -39,21 +47,28 @@ def _parse_page(
 
 def iter_pages(start_url):
     url = start_url
-    while True:
-        soup = flower_get(url)
-        song_row = soup.find_all("tr", class_="accordion-toggle")
-        if len(song_row) == 0:
-            break
-        yield _parse_page(song_row, soup, "iidx" in url)
+    while url is not None:
+        if url in iter_pages.page_cache:
+            # page is cached
+            yield iter_pages.page_cache[url][0]
+            url = iter_pages.page_cache[url][1]
+        else:
+            # get current page and parse
+            soup = flower_get(url)
+            song_row = soup.find_all("tr", class_="accordion-toggle")
+            if len(song_row) == 0:
+                break
+            parsed = _parse_page(song_row, soup, "iidx" in url)
 
-        paginator = soup.find("ul", class_="pagination")
-        if not paginator:
-            break
-        next_button = paginator.find_all("li")[-1].find("a")
-        if not next_button:
-            break
-        url = next_button["href"]
+            # get next url.
+            paginator = soup.find("ul", class_="pagination")
+            next_button = paginator.find_all("li")[-1].find("a") if paginator else None
+            next_url = next_button["href"] if next_button else None
 
+            iter_pages.page_cache[url] = (parsed, next_url)
+            yield parsed
+            url = next_url
+iter_pages.page_cache = {}
 
 def parse_pages(game: Game, pages: list[int]) -> list[FlowerSongData]:
     url = find_profile_url(game)
@@ -79,11 +94,11 @@ def parse_pages(game: Game, pages: list[int]) -> list[FlowerSongData]:
             exit(1)
         for page in iter_pages(url):
             songs.extend(page)
+            if _should_score_exist(page[-1], date):
+                break
 
-            oldest_song = songs[-1].header[-1].find("small").text
-            oldest_date = datetime.strptime(oldest_song, "%Y-%m-%d %I:%M %p")
-            if oldest_date < date:
-                return songs
+        # filter out songs that should already be in tachi
+        return list(filter(lambda x: not _should_score_exist(x, date), songs))
 
     for page in pages:
         soup = flower_get(f"{url}?page={page}")

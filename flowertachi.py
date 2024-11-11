@@ -13,7 +13,6 @@ from games.jubeat import Jubeat
 from games.museca import Museca
 from games.popn import PopnMusic
 from games.sound_voltex import SoundVoltex
-
 from tachi import submit_score
 
 SUPPORTED_GAMES: List[Game] = [
@@ -101,13 +100,14 @@ if __name__ == "__main__":
         )
         exit(1)
 
-    # games with different playtypes come up in same list and dont wanna flood flower with requests
-    page_cache = {}
     for game in args.games:
-        if game.flower_name not in page_cache:
-            page_data = parse_pages(game, args.pages)
-            page_cache[game.flower_name] = page_data
-        tachi_json = game.parse(page_cache[game.flower_name])
+        songs = parse_pages(game, args.pages)
+
+        tachi_json = game.parse(songs)
+        if len(tachi_json["scores"]) == 0:
+            print(f"No new scores for {game.flower_name} ({game.tachi_gpt[1]}). Skipping")
+            continue
+
         if args.json:
             filename = f"score_{game.tachi_gpt[0]}_{game.tachi_gpt[1]}.json"
             with open(filename, "w") as f:  # type: TextIOWrapper
