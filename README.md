@@ -17,7 +17,7 @@ A python tool for importing flower scores into kamaitachi
 ### Import page 1 to 3 of IIDX single play scores
 `python flowertachi.py -g iidx:SP -p 1-3` 
 ### Import all jubeat scores since last session on Tachi 
-`python flowertachi.py -g jubeat:Single -p recent
+`python flowertachi.py -g jubeat:Single -p recent`
 ### Import every DDR singles and doubles score
 `python flowertachi.py -g ddr:SP ddr:DP -p all`
 > [!CAUTION]
