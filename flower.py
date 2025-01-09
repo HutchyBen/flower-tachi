@@ -46,6 +46,7 @@ def _parse_page(
         else:
             script = None
         songs.append(FlowerSongData(song, script))
+        index += 1
     return songs
 
 
