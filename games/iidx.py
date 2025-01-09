@@ -23,13 +23,12 @@ def _parse_diff(full_diff: str) -> tuple[str, str]:
 def _parse_graph_script(script: str) -> dict:
     start = script.find("= {") + 2
     end = script.find("};") + 1
-
     datasets = json5.loads(script[start:end])["datasets"]
 
     start = script.find("ticks: {", end) + 7
     end = script.find("}", start) + 1
-
     options = json5.loads(script[start:end])
+
     gauge = [data["y"] for data in datasets[0]["data"]]
     scores = [
         min(110, data) / 1.1 for data in datasets[1]["data"]
