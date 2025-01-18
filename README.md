@@ -1,6 +1,9 @@
 # flower-tachi
 A python tool for importing flower scores into kamaitachi
 
+## Notice
+using recent pages will not work if you don't have any sessions on tachi, make sure to pull all scores first then you can use the recent pages option to only pull new pages from flower
+
 ## How To Use
 -  modify config.py script variables to own
     - `flower_session` is obtained from cookies on flower website
