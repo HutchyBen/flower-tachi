@@ -98,8 +98,11 @@ def parse_pages(game: Game, pages: list[int]) -> list[FlowerSongData]:
                 session["body"]["session"]["timeEnded"] / 1000
             )
         except RuntimeError:
-            print("Could not find any sessions. Aborting")
-            exit(1)
+            print("Could not find any sessions. Assuming all scores are needed")
+            for page in iter_pages(url):
+                songs.extend(page)
+            return songs
+        
         for page in iter_pages(url):
             songs.extend(page)
             if _should_score_exist(page[-1], date):
