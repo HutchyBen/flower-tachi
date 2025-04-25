@@ -1,7 +1,7 @@
 import argparse
 import json
 from io import TextIOWrapper
-from typing import List
+from typing import List, Union
 
 from config import FLOWER_SESSION, TACHI_API_KEY
 from flower import parse_pages
@@ -29,7 +29,7 @@ SUPPORTED_GAMES: List[Game] = [
 ]
 
 
-def parse_numbers(nums_input: list[str]) -> list[int] | str:
+def parse_numbers(nums_input: list[str]) -> Union[list[int], str]:
     numbers = set()
     if not nums_input:
         return [1]
