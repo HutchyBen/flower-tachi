@@ -47,6 +47,9 @@ class IIDX(Game):
         json_data = create_base(self.tachi_gpt)
 
         for song in songs:
+            if len(song.url) != 9: # ignore url that isnt a song, weekly stuff shows as link like this
+                continue
+
             diff = _parse_diff(song.header[4].find("b").previous_sibling.text.strip())
             if diff == "BEGINNER":
                 continue
@@ -69,7 +72,7 @@ class IIDX(Game):
                 fast_slow = song.accordion[16].find("br").next_sibling.text.split(" / ")
                 judgements[5] = int(fast_slow[0])
                 judgements[6] = int(fast_slow[1])
-
+            print(song.url)
             song_data = {
                 "matchType": "inGameID",
                 "identifier": song.url[7],
