@@ -29,7 +29,7 @@ def _parse_graph_script(script: str) -> dict:
     end = script.find("}", start) + 1
     options = json5.loads(script[start:end])
 
-    gauge = [data["y"] for data in datasets[0]["data"]]
+    gauge = [min(100,data["y"]) for data in datasets[0]["data"]]
     scores = [
         min(110, data) / 1.1 for data in datasets[1]["data"]
     ]  # max is 110 not 100 which tachi expects
@@ -54,6 +54,10 @@ class IIDX(Game):
             if diff == "BEGINNER":
                 continue
 
+            lamp = song.header[5].find("strong").text
+            if lamp == "EX-HARD CLEAR":
+                lamp = "EX HARD CLEAR"
+
             if self.tachi_gpt[1] != diff[0]:
                 continue
 
@@ -72,12 +76,11 @@ class IIDX(Game):
                 fast_slow = song.accordion[16].find("br").next_sibling.text.split(" / ")
                 judgements[5] = int(fast_slow[0])
                 judgements[6] = int(fast_slow[1])
-            print(song.url)
             song_data = {
                 "matchType": "inGameID",
                 "identifier": song.url[7],
                 "score": int(song.accordion[2].find("br").next_sibling.text.strip()),
-                "lamp": song.header[5].find("strong").text,
+                "lamp": lamp,
                 "difficulty": diff[1],
                 "timeAchieved": parse_date(song.header[8].find("small").text),
                 "judgements": {

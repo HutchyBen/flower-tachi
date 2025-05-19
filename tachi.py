@@ -32,5 +32,5 @@ def get_recent_session(ugpt: tuple[str, str]) -> datetime.date:
         headers=headers,
     )
     if res.status_code != 200:
-        raise Exception("no session found")
+        raise RuntimeWarning("no session found")
     return res.json()

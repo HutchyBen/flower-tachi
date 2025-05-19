@@ -97,7 +97,7 @@ def parse_pages(game: Game, pages: list[int]) -> list[FlowerSongData]:
             date = datetime.fromtimestamp(
                 session["body"]["session"]["timeEnded"] / 1000
             )
-        except RuntimeError:
+        except RuntimeWarning:
             print("Could not find any sessions. Assuming all scores are needed")
             for page in iter_pages(url):
                 songs.extend(page)
