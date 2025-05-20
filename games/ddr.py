@@ -30,19 +30,12 @@ class DanceDanceRevolution(Game):
                     lamp = "LIFE4"
                 elif lamp == "GOOD FULL COMBO":
                     lamp = "FULL COMBO"
+                elif lamp == "ASSIST CLEAR":
+                    lamp = "ASSIST"
 
             flare_str = song.header[6].find("strong").text.strip()
-
-            song_data = {
-                "matchType": "inGameID",
-                "identifier": song.url[7],
-                "score": int(
-                    song.header[3].find("strong").text.strip().replace(",", "")
-                ),
-                "lamp": lamp,
-                "difficulty": diff[1],
-                "timeAchieved": parse_date(song.header[8].find("small").text),
-                "judgements": {
+            if len(song.accordion) == 7:
+                judgements = {
                     "MARVELOUS": int(
                         song.accordion[6]
                         .find_all("div")[0]
@@ -85,7 +78,21 @@ class DanceDanceRevolution(Game):
                         .find("br")
                         .next_sibling.text.strip()
                     ),
-                },
+                }
+            else:
+                judgements = {}
+
+
+            song_data = {
+                "matchType": "inGameID",
+                "identifier": song.url[7],
+                "score": int(
+                    song.header[3].find("strong").text.strip().replace(",", "")
+                ),
+                "lamp": lamp,
+                "difficulty": diff[1],
+                "timeAchieved": parse_date(song.header[8].find("small").text),
+                "judgements": judgements,
                 "optional": {
                     "flare": FLARE_TEXT[int(flare_str)] if flare_str != "" else "0",
                 },
