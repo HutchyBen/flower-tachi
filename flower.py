@@ -3,7 +3,7 @@ from datetime import datetime
 import requests
 from bs4 import BeautifulSoup, ResultSet
 
-from config import FLOWER_SESSION
+from config import FLOWER_SESSION, FLOWER_BASE_URL
 from ft_types import FlowerSongData, Game
 from tachi import get_recent_session
 
@@ -18,7 +18,7 @@ def flower_get(url: str) -> BeautifulSoup:
 # This now stores the home page so a request isnt made for every single playtype
 def find_profile_url(game: Game):
     if find_profile_url.home_page is None:
-        find_profile_url.home_page = flower_get("https://projectflower.eu")
+        find_profile_url.home_page = flower_get(FLOWER_BASE_URL)
 
     button = find_profile_url.home_page.find("a", attrs={"title": game.flower_name})
     if button is None:
@@ -102,7 +102,7 @@ def parse_pages(game: Game, pages: list[int]) -> list[FlowerSongData]:
             for page in iter_pages(url):
                 songs.extend(page)
             return songs
-        
+
         for page in iter_pages(url):
             songs.extend(page)
             if _should_score_exist(page[-1], date):
