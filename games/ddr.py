@@ -82,7 +82,6 @@ class DanceDanceRevolution(Game):
             else:
                 judgements = {}
 
-
             song_data = {
                 "matchType": "inGameID",
                 "identifier": song.url[7],

@@ -29,7 +29,7 @@ def _parse_graph_script(script: str) -> dict:
     end = script.find("}", start) + 1
     options = json5.loads(script[start:end])
 
-    gauge = [min(100,data["y"]) for data in datasets[0]["data"]]
+    gauge = [min(100, data["y"]) for data in datasets[0]["data"]]
     scores = [
         min(110, data) / 1.1 for data in datasets[1]["data"]
     ]  # max is 110 not 100 which tachi expects
@@ -47,7 +47,9 @@ class IIDX(Game):
         json_data = create_base(self.tachi_gpt)
 
         for song in songs:
-            if len(song.url) != 9: # ignore url that isnt a song, weekly stuff shows as link like this
+            if (
+                len(song.url) != 9
+            ):  # ignore url that isnt a song, weekly stuff shows as link like this
                 continue
 
             diff = _parse_diff(song.header[4].find("b").previous_sibling.text.strip())
