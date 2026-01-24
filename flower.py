@@ -3,14 +3,14 @@ from datetime import datetime
 import requests
 from bs4 import BeautifulSoup, ResultSet
 
-from config import FLOWER_SESSION, FLOWER_BASE_URL
+from config import FLOWER_SESSION, FLOWER_BASE_URL, FLOWER_COOKIE
 from ft_types import FlowerSongData, Game
 from tachi import get_recent_session
 
 
 def flower_get(url: str) -> BeautifulSoup:
     s = requests.Session()
-    s.cookies.set("flower_session", FLOWER_SESSION)
+    s.cookies.set(FLOWER_COOKIE, FLOWER_SESSION)
     res = s.get(url)
     return BeautifulSoup(res.text, "html.parser")
 
@@ -80,7 +80,6 @@ iter_pages.page_cache = {}
 
 def parse_pages(game: Game, pages: list[int]) -> list[FlowerSongData]:
     url = find_profile_url(game)
-
     songs: list[FlowerSongData] = list[
         FlowerSongData
     ]()  # huh type checking complains if you use []
