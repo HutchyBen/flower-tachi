@@ -4,11 +4,12 @@ import requests
 from requests import Response
 
 from config import (
-    TACHI_BASE_URL,
     TACHI_API_KEY,
+    TACHI_BASE_URL,
     TACHI_IMPORT_ENDPOINT,
     TACHI_LATEST_SESSION_ENDPOINT,
 )
+from ft_types import Game
 
 
 def create_base(gpt: tuple[str, str]) -> dict:
@@ -25,10 +26,11 @@ def submit_score(json_data: dict) -> Response:
     )
 
 
-def get_recent_session(ugpt: tuple[str, str]) -> datetime.date:
+def get_recent_session(game: Game) -> datetime.date:
     headers = {"Authorization": "Bearer " + TACHI_API_KEY}
     res = requests.get(
-        TACHI_BASE_URL + TACHI_LATEST_SESSION_ENDPOINT.format("me", ugpt[0], ugpt[1]),
+        TACHI_BASE_URL
+        + TACHI_LATEST_SESSION_ENDPOINT.format("me", game.get_url_name()),
         headers=headers,
     )
     if res.status_code != 200:

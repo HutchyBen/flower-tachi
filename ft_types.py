@@ -1,5 +1,6 @@
-from typing import List
 from abc import ABC, abstractmethod
+from typing import List
+
 from bs4 import BeautifulSoup
 
 
@@ -33,6 +34,9 @@ class Game(ABC):
     @abstractmethod
     def parse(self, songs: list[FlowerSongData]) -> dict:
         pass
+
+    def get_url_name(self) -> str:
+        return f"{self.tachi_gpt[0]}-{self.tachi_gpt[1].lower()}"
 
 
 class Arguments(object):

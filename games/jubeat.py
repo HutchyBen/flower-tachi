@@ -1,11 +1,14 @@
 from flower import parse_date
-from ft_types import Game, FlowerSongData
+from ft_types import FlowerSongData, Game
 from tachi import create_base
 
 
 class Jubeat(Game):
     def __init__(self):
         super().__init__("Jubeat", ("jubeat", "Single"))
+
+    def get_url_name(self):
+        return "jubeat"
 
     def parse(self, songs: list[FlowerSongData]) -> dict:
         json_data = create_base(self.tachi_gpt)

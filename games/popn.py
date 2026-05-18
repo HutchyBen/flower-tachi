@@ -1,5 +1,5 @@
 from flower import parse_date
-from ft_types import Game, FlowerSongData
+from ft_types import FlowerSongData, Game
 from tachi import create_base
 
 # padding out by one
@@ -22,6 +22,9 @@ medals = [
 class PopnMusic(Game):
     def __init__(self):
         super().__init__("pop'n music", ("popn", "9B"))
+
+    def get_url_name(self):
+        return "popn"
 
     def parse(self, songs: list[FlowerSongData]) -> dict:
         json_data = create_base(self.tachi_gpt)

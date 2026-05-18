@@ -1,11 +1,14 @@
 from flower import parse_date
-from ft_types import Game, FlowerSongData
+from ft_types import FlowerSongData, Game
 from tachi import create_base
 
 
 class SoundVoltex(Game):
     def __init__(self):
         super().__init__("Sound Voltex", ("sdvx", "Single"))
+
+    def get_url_name(self):
+        return "popn"
 
     def parse(self, songs: list[FlowerSongData]) -> dict:
         json_data = create_base(self.tachi_gpt)

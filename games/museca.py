@@ -1,5 +1,5 @@
 from flower import parse_date
-from ft_types import Game, FlowerSongData
+from ft_types import FlowerSongData, Game
 from tachi import create_base
 
 
@@ -15,6 +15,9 @@ def _parse_diff(diff_str: str) -> str:
 class Museca(Game):
     def __init__(self):
         super().__init__("MÚSECA", ("museca", "Single"))
+
+    def get_url_name(self):
+        return "museca"
 
     def parse(self, songs: list[FlowerSongData]) -> dict:
         json_data = create_base(self.tachi_gpt)

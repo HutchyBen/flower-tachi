@@ -5,7 +5,7 @@ from typing import List, Union
 
 from config import FLOWER_SESSION, TACHI_API_KEY
 from flower import parse_pages
-from ft_types import Game, Arguments
+from ft_types import Arguments, Game
 from games.ddr import DanceDanceRevolution
 from games.gitadora import Gitadora
 from games.iidx import IIDX
@@ -120,4 +120,4 @@ if __name__ == "__main__":
                 json.dump(tachi_json, f, indent=4)
         else:
             print(f"Uploading {game.flower_name} ({game.tachi_gpt[1]}) scores to tachi")
-            submit_score(tachi_json)
+            res = submit_score(tachi_json)

@@ -3,7 +3,7 @@ from datetime import datetime
 import requests
 from bs4 import BeautifulSoup, ResultSet
 
-from config import FLOWER_SESSION, FLOWER_BASE_URL, FLOWER_COOKIE
+from config import FLOWER_BASE_URL, FLOWER_COOKIE, FLOWER_SESSION
 from ft_types import FlowerSongData, Game
 from tachi import get_recent_session
 
@@ -92,7 +92,7 @@ def parse_pages(game: Game, pages: list[int]) -> list[FlowerSongData]:
     if pages == "recent":
         date: datetime.date
         try:
-            session = get_recent_session(game.tachi_gpt)
+            session = get_recent_session(game)
             date = datetime.fromtimestamp(
                 session["body"]["session"]["timeEnded"] / 1000
             )

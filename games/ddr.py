@@ -1,7 +1,7 @@
 from typing import Literal
 
 from flower import parse_date
-from ft_types import Game, FlowerSongData
+from ft_types import FlowerSongData, Game
 from tachi import create_base
 
 FLARE_TEXT = ["0", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "EX"]
@@ -10,6 +10,9 @@ FLARE_TEXT = ["0", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "EX"]
 class DanceDanceRevolution(Game):
     def __init__(self, playtype: Literal["SP", "DP"]):
         super().__init__("DanceDanceRevolution", ("ddr", playtype))
+
+    def get_url_name(self) -> str:
+        return "ddr-" + self.tachi_gpt[1].lower()
 
     def parse(self, songs: list[FlowerSongData]) -> dict:
         json_data = create_base(self.tachi_gpt)
