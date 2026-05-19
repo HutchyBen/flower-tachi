@@ -31,11 +31,20 @@ class Museca(Game):
             # convert flower name to tachi
             if lamp == "CLEARED":
                 lamp = "CLEAR"
+            
+            # judgements
+            critical = int(song.accordion[1].find("br").next_sibling.text.strip())
+            near = int(song.accordion[2].find("br").next_sibling.text.strip())
+            miss = int(song.accordion[3].find("br").next_sibling.text.strip())
 
-            # in tachi scores much alays follow 800k is always clear
-            if score < 800000:
+            # in tachi scores must alays follow specific rules
+            if score < 800000: # <800k scores are fails
                 lamp = "FAILED"
-            elif lamp == "FAILED":
+            elif score == 1000000: # 1m scores must be perfect connect all
+                lamp = "PERFECT CONNECT ALL"
+            elif miss == 0: # 0 misses must be connect all
+                lamp = "CONNECT ALL"
+            elif lamp == "FAILED": # mission mode fails do not count
                 lamp = "CLEAR"
 
             song_data = {
