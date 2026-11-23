@@ -21,21 +21,27 @@ def _parse_diff(full_diff: str) -> tuple[str, str]:
 
 
 def _parse_graph_script(script: str) -> dict:
-    start = script.find("= {") + 2
-    end = script.find("};") + 1
+    start = script.find("data = {") + 7
+    end = script.find("};", start) + 1
     datasets = json5.loads(script[start:end])["datasets"]
 
-    start = script.find("ticks: {", end) + 7
-    end = script.find("}", start) + 1
-    options = json5.loads(script[start:end])
+    start = script.find("options = {", end) + 10
+    end = script.find("};", start) + 1
+    # options now has a callback fn in it, sanitize it out
+    options_script = script[start:end]
+    cb_start = options_script.find("function(")
+    cb_end = options_script.find("}", cb_start) + 1 # hacky, only works if there's no nested blocks in the fn
+    options_script = options_script[:cb_start] + "0" + options_script[cb_end:]
+    print(options_script)
+
+    options = json5.loads(options_script)
+    y_options = options["scales"]["y"]
 
     gauge = [min(100, data["y"]) for data in datasets[0]["data"]]
-    scores = [
-        min(110, data) / 1.1 for data in datasets[1]["data"]
-    ]  # max is 110 not 100 which tachi expects
+    scores = [min(100, data) for data in datasets[1]["data"]]
     return {
         "score": scores,
-        "gauge": (gauge + options["max"] * [None])[: options["max"]],
+        "gauge": (gauge + y_options["max"] * [None])[: y_options["max"]],
     }
 
 
