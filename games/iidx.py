@@ -32,7 +32,6 @@ def _parse_graph_script(script: str) -> dict:
     cb_start = options_script.find("function(")
     cb_end = options_script.find("}", cb_start) + 1 # hacky, only works if there's no nested blocks in the fn
     options_script = options_script[:cb_start] + "0" + options_script[cb_end:]
-    print(options_script)
 
     options = json5.loads(options_script)
     y_options = options["scales"]["y"]
