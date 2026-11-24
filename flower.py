@@ -38,11 +38,20 @@ def _should_score_exist(score: FlowerSongData, date: datetime) -> bool:
 def _parse_page(
     page_songs: ResultSet, page: BeautifulSoup, iidx: bool
 ) -> list[FlowerSongData]:
-    index = 0
     songs: list[FlowerSongData] = list[FlowerSongData]()
+
+    # IIDX graph handling
+    index = 0
+    graph_scripts: list[str] = list[str]()
+    if iidx:
+        for script in page.find_all("script"):
+            script_text = script.text
+            if "datasets" in script_text: # crap hack to detect if the script is a generated one for the IIDX gauge graph
+                graph_scripts.append(script_text)
+    
     for song in page_songs:
         if iidx:
-            script = page.find_all("script")[index + 4].text
+            script = graph_scripts[index]
         else:
             script = None
         songs.append(FlowerSongData(song, script))
